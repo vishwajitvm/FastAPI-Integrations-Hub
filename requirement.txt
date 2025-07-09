@@ -2,3 +2,4 @@ flask
 requests
 python-jose
 python-dotenv
+python-jose[cryptography]
