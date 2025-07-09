@@ -155,7 +155,7 @@ def list_team_folders():
         "Authorization": f"Zoho-oauthtoken {access_token}"
     }
 
-    # Step 1: Get list of teams
+    # Get list of teams
     teams_url = f"{ZOHO_API_URL}/workdrive/api/v1/users/me/teams"
     res = requests.get(teams_url, headers=headers)
 
@@ -174,7 +174,7 @@ def list_team_folders():
         team_name = team.get("attributes", {}).get("name", "Unnamed Team")
         output += f"<h4>Team: {team_name}</h4><ul>"
 
-        # Step 2: Get team folders for each team
+        # Get team folders for each team
         teamfolders_url = f"{ZOHO_API_URL}/workdrive/api/v1/teamfolders?org_id={team_id}"
         res2 = requests.get(teamfolders_url, headers=headers)
 
