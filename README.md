@@ -21,7 +21,7 @@ This project demonstrates a simple Proof of Concept (PoC) for integrating **Zoho
 ├── requirements.txt # Python dependencies\
 ├── templates/\
 │ └── login.html # Simple login page template\
-└── README.md # Project documentation\
+└── README.md # Project documentation
 
 ---
 
@@ -54,9 +54,8 @@ git clone https://github.com/vishwajitvm/Zoho-SSO-Login-with-Python--Flask-.git
 - 🗂️ **Access personal WorkDrive folders** — list files and folders from the user's **My Folders** area in Zoho WorkDrive.
 - 👥 **Access team folders** — view all team folders and their details in Zoho WorkDrive (supports listing folders inside each team).
 - 💼 **Maintain user sessions** — keep users logged in using Flask sessions and easily manage logout.
-- ⚡ **Extendable to other Zoho APIs** — can be expanded to interact with Zoho CRM, Mail, and other Zoho services.
 - 🚪 **Simple login & logout flow** — intuitive and minimal setup to understand core authentication and file listing flow.
-- 🧾 **Beautifully formatted JSON debugging** — prints raw Zoho API responses in a clean, indented format for easy inspection during development.
+
 
 ---
 
