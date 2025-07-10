@@ -156,6 +156,44 @@ uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 
 ---
 
+.
+
+## 📄 API Documentation
+FastAPI automatically provides interactive and static API documentation out of the box!
+
+### 1️⃣ Swagger UI URL
+```bash
+ http://localhost:8000/docs
+ ```
+
+- Interactive interface to explore and test your endpoints directly.
+
+- Supports authentication flows, parameters, and request bodies.
+
+- Ideal for developers and API testers.
+
+### 2️⃣ ReDocURL
+```bash
+ http://localhost:8000/redoc
+```
+- Clean, well-structured static documentation view.
+
+- Great for sharing with business or non-technical stakeholders to explain available APIs.
+
+- Provides easy navigation and human-readable endpoint summaries.
+
+.
+
+
+
+> ### ⚡️ Additional Notes
+No extra setup is needed — both docs are auto-generated from your FastAPI routers and docstrings.
+
+> You can customize descriptions, summaries, and request/response schemas directly in your router files using standard FastAPI annotations.
+
+
+
+---
 ## ✉️ Contact
 
 Created by **Vishwait VM** — [vishwajitmall0@gmail.com](mailto:vishwajitmall0@gmail.com)
