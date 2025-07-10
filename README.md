@@ -1,8 +1,9 @@
-# 🚀 Zoho SSO Login PoC using Flask 
 
-This project demonstrates a scalable Proof of Concept (PoC) for integrating **Zoho Single Sign-On (SSO)** using OAuth 2.0 and OpenID Connect (OIDC) with Python Flask.
+# 🚀 Zoho SSO Login PoC using FastAPI
 
-> ✅ Refactored using Flask routers for clean, maintainable, and scalable code!
+This project demonstrates a scalable Proof of Concept (PoC) for integrating **Zoho Single Sign-On (SSO)** using OAuth 2.0 and OpenID Connect (OIDC) with **Python FastAPI**.
+
+> ✅ Refactored using FastAPI routers for clean, maintainable, and scalable code!
 
 ---
 
@@ -12,7 +13,7 @@ This project demonstrates a scalable Proof of Concept (PoC) for integrating **Zo
 - 🔑 Decode `id_token` (JWT) to extract user profile details (name, email, Zoho User ID)
 - 🗂️ Access personal WorkDrive folders (My Folders)
 - 👥 Access team folders (Team Folders)
-- 💼 Maintain user sessions using Flask
+- 💼 Maintain user sessions using FastAPI in-memory storage
 - 🚪 Simple login & logout flow
 - 🧩 Clean modular structure with routers, easy to extend
 
@@ -22,16 +23,15 @@ This project demonstrates a scalable Proof of Concept (PoC) for integrating **Zo
 
 ```
 your_project/
-├── app.py               # Main Flask app entry point
+├── main.py               # Main FastAPI app entry point
 ├── config.py            # Central configuration (env vars, API base URLs)
 ├── .env                 # Environment variables (client ID, secret, etc.)
 ├── requirements.txt     # Python dependencies
 ├── README.md            # Project documentation (this file)
 ├── templates/
 │   ├── login.html       # Login page template
-│   └── home.html        # Optional home page template
 ├── routers/
-│   ├── __init__.py     # Blueprint registry
+│   ├── __init__.py
 │   ├── zoho/
 │   │   ├── __init__.py
 │   │   ├── auth.py     # Auth routes (login, callback, logout)
@@ -53,8 +53,8 @@ your_project/
 ### 📁 Folder usage
 
 - **`routers/zoho/`** — all Zoho SSO and WorkDrive logic. Contains auth routes, folder listing, and Zoho-specific API helpers.
-- **`routers/keke/`** — placeholder for future "Keke" API integration, can add your own business logic here.
-- **`routers/otherapi/`** — placeholder for any other future APIs, to keep your project modular and clean.
+- **`routers/keke/`** — placeholder for future "Keke" API integration.
+- **`routers/otherapi/`** — placeholder for other future APIs, to keep your project modular and clean.
 - **`utils/`** — general reusable helpers shared across routers if needed.
 
 ---
@@ -67,7 +67,7 @@ your_project/
 4️⃣ Zoho redirects back with a code.  
 5️⃣ App exchanges code for access token and `id_token`.  
 6️⃣ `id_token` is decoded to get user profile (name, email, Zoho user ID).  
-7️⃣ User session is created, allowing access to:
+7️⃣ User session is created in memory, allowing access to:
    - ✅ My Folders
    - ✅ Team folders
 8️⃣ User can logout anytime to clear session.
@@ -89,8 +89,8 @@ your_project/
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/vishwajitvm/Zoho-SSO-Login-with-Python--Flask-.git
-cd Zoho-SSO-Login-with-Python--Flask-
+git clone https://github.com/vishwajitvm/Zoho-SSO-Login-with-Python--FastAPI-.git
+cd Zoho-SSO-Login-with-Python--FastAPI-
 ```
 
 ---
@@ -123,7 +123,7 @@ ZOHO_REDIRECT_URI=http://localhost:8000/callback
 ### 4️⃣ Run the app
 
 ```bash
-python app.py
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 Then open [http://localhost:8000/](http://localhost:8000/) in your browser.
@@ -143,7 +143,7 @@ pip install -r requirements.txt
 # ZOHO_CLIENT_SECRET=your_zoho_client_secret_here
 # ZOHO_REDIRECT_URI=http://localhost:8000/callback
 
-python app.py
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 ---
