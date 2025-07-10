@@ -23,21 +23,39 @@ This project demonstrates a scalable Proof of Concept (PoC) for integrating **Zo
 ```
 your_project/
 ├── app.py               # Main Flask app entry point
-├── config.py            # Configuration (env vars, API base URLs)
+├── config.py            # Central configuration (env vars, API base URLs)
 ├── .env                 # Environment variables (client ID, secret, etc.)
 ├── requirements.txt     # Python dependencies
 ├── README.md            # Project documentation (this file)
 ├── templates/
-│   ├── login.html
-│   └── home.html (optional)
+│   ├── login.html       # Login page template
+│   └── home.html        # Optional home page template
 ├── blueprints/
-│   ├── __init__.py
-│   ├── auth.py         # Auth routes (login, callback, logout)
-│   └── folders.py      # Routes for My Folders and Team Folders
+│   ├── __init__.py     # Blueprint registry
+│   ├── zoho/
+│   │   ├── __init__.py
+│   │   ├── auth.py     # Auth routes (login, callback, logout)
+│   │   ├── folders.py  # Routes for My Folders and Team Folders
+│   │   └── zoho_client.py  # Helper functions for Zoho API (token exchange, API calls)
+│   ├── keke/
+│   │   ├── __init__.py
+│   │   ├── keke_routes.py  # Example future API routes
+│   │   └── keke_utils.py   # Example helper functions for Keke
+│   └── otherapi/
+│       ├── __init__.py
+│       ├── routes.py      # Example other API routes
+│       └── utils.py       # Example helper functions for other APIs
 └── utils/
     ├── __init__.py
-    └── zoho_client.py  # Helper functions for Zoho API
+    └── shared.py     # Shared helper functions (if needed)
 ```
+
+### 📁 Folder usage
+
+- **`blueprints/zoho/`** — all Zoho SSO and WorkDrive logic. Contains auth routes, folder listing, and Zoho-specific API helpers.
+- **`blueprints/keke/`** — placeholder for future "Keke" API integration, can add your own business logic here.
+- **`blueprints/otherapi/`** — placeholder for any other future APIs, to keep your project modular and clean.
+- **`utils/`** — general reusable helpers shared across blueprints if needed.
 
 ---
 
@@ -62,6 +80,7 @@ your_project/
 - 💬 Fetch detailed WorkDrive file metadata or preview links.
 - 📁 Add upload, move, or delete operations on WorkDrive.
 - 🧑‍💼 Add roles & user management logic.
+- 🪁 Add new APIs inside `keke/` or `otherapi/` folders without affecting Zoho code.
 
 ---
 
