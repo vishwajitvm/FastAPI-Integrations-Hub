@@ -1,5 +1,7 @@
-flask
-requests
-python-jose
+fastapi
+uvicorn
 python-dotenv
+python-jose
+requests
+Jinja2
 python-jose[cryptography]

@@ -2,7 +2,7 @@
 
 This project demonstrates a scalable Proof of Concept (PoC) for integrating **Zoho Single Sign-On (SSO)** using OAuth 2.0 and OpenID Connect (OIDC) with Python Flask.
 
-> ✅ Refactored using Flask Blueprints for clean, maintainable, and scalable code!
+> ✅ Refactored using Flask routers for clean, maintainable, and scalable code!
 
 ---
 
@@ -14,7 +14,7 @@ This project demonstrates a scalable Proof of Concept (PoC) for integrating **Zo
 - 👥 Access team folders (Team Folders)
 - 💼 Maintain user sessions using Flask
 - 🚪 Simple login & logout flow
-- 🧩 Clean modular structure with Blueprints, easy to extend
+- 🧩 Clean modular structure with routers, easy to extend
 
 ---
 
@@ -30,7 +30,7 @@ your_project/
 ├── templates/
 │   ├── login.html       # Login page template
 │   └── home.html        # Optional home page template
-├── blueprints/
+├── routers/
 │   ├── __init__.py     # Blueprint registry
 │   ├── zoho/
 │   │   ├── __init__.py
@@ -52,10 +52,10 @@ your_project/
 
 ### 📁 Folder usage
 
-- **`blueprints/zoho/`** — all Zoho SSO and WorkDrive logic. Contains auth routes, folder listing, and Zoho-specific API helpers.
-- **`blueprints/keke/`** — placeholder for future "Keke" API integration, can add your own business logic here.
-- **`blueprints/otherapi/`** — placeholder for any other future APIs, to keep your project modular and clean.
-- **`utils/`** — general reusable helpers shared across blueprints if needed.
+- **`routers/zoho/`** — all Zoho SSO and WorkDrive logic. Contains auth routes, folder listing, and Zoho-specific API helpers.
+- **`routers/keke/`** — placeholder for future "Keke" API integration, can add your own business logic here.
+- **`routers/otherapi/`** — placeholder for any other future APIs, to keep your project modular and clean.
+- **`utils/`** — general reusable helpers shared across routers if needed.
 
 ---
 
