@@ -1,0 +1,18 @@
+# constants/response_messages.py
+
+SUCCESS = "Request processed successfully."
+UNAUTHORIZED = "You are not authorized to perform this action."
+NOT_LOGGED_IN = "Not logged in"
+NOT_FOUND = "The requested resource was not found."
+BAD_REQUEST = "Invalid request parameters."
+INTERNAL_ERROR = "An unexpected error occurred. Please try again later."
+SESSION_EXPIRED = "Session has expired. Please login again."
+LOGIN_SUCCESS = "Login successful."
+LOGOUT_SUCCESS = "Logged out successfully."
+TOKEN_EXCHANGE_FAILED = "Failed to exchange token with Zoho."
+FETCH_USER_FAILED = "Failed to fetch user details."
+FOLDERS_FETCH_FAILED = "Failed to fetch folders or files from Zoho."
+NO_TEAMS_FOUND = "No teams found."
+NO_ROOT_FOLDER = "Could not get My Folders root ID."
+NO_CODE = "No code received from Zoho."
+NO_ACCESS_TOKEN = "No access_token received."

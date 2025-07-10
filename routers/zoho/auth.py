@@ -4,6 +4,8 @@ from fastapi.templating import Jinja2Templates
 from config import Config
 import requests
 from jose import jwt
+from constants import response_messages as msg
+from constants import status_codes as sc
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(tags=["Zoho Auth"])
@@ -24,7 +26,7 @@ async def home(request: Request):
             <a href="/folders/my">List My Folders & Files</a><br>
             <a href="/folders/team">List Team Folders & Files</a><br>
             <a href="/logout">Logout</a>
-            """
+            """, status_code=sc.HTTP_OK
         )
     return templates.TemplateResponse("login.html", {"request": request})
 
@@ -44,7 +46,7 @@ async def login():
 @router.get("/callback")
 async def callback(code: str = None):
     if not code:
-        return HTMLResponse("No code received from Zoho", status_code=400)
+        return HTMLResponse(msg.NO_CODE, status_code=sc.HTTP_BAD_REQUEST)
 
     token_url = f"{Config.ZOHO_ACCOUNTS_URL}/oauth/v2/token"
     data = {
@@ -57,15 +59,15 @@ async def callback(code: str = None):
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     res = requests.post(token_url, data=data, headers=headers)
 
-    if res.status_code != 200:
-        return HTMLResponse(f"Failed to get token: {res.text}", status_code=400)
+    if res.status_code != sc.HTTP_OK:
+        return HTMLResponse(f"{msg.TOKEN_EXCHANGE_FAILED}: {res.text}", status_code=sc.HTTP_BAD_REQUEST)
 
     tokens = res.json()
     id_token = tokens.get('id_token')
     access_token = tokens.get('access_token')
 
     if not access_token:
-        return HTMLResponse("No access_token received", status_code=400)
+        return HTMLResponse(msg.NO_ACCESS_TOKEN, status_code=sc.HTTP_BAD_REQUEST)
 
     user_info = {'access_token': access_token}
 

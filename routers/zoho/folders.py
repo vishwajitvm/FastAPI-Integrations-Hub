@@ -4,13 +4,16 @@ import requests
 from config import Config
 from routers.zoho.auth import user_sessions
 
+from constants import response_messages as msg
+from constants import status_codes as sc
+
 router = APIRouter(prefix="/folders", tags=["Zoho Folders"])
 
 @router.get("/my", response_class=HTMLResponse)
 async def my_folders():
     user = user_sessions.get("current_user")
     if not user:
-        return HTMLResponse("Not logged in", status_code=401)
+        return HTMLResponse(msg.NOT_LOGGED_IN, status_code=sc.HTTP_UNAUTHORIZED)
 
     access_token = user['access_token']
     headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
@@ -18,8 +21,8 @@ async def my_folders():
     user_url = f"{Config.ZOHO_API_URL}/workdrive/api/v1/users/me"
     res = requests.get(user_url, headers=headers)
 
-    if res.status_code != 200:
-        return HTMLResponse(f"Failed to fetch user details: {res.text}", status_code=400)
+    if res.status_code != sc.HTTP_OK:
+        return HTMLResponse(f"{msg.FETCH_USER_FAILED}: {res.text}", status_code=sc.HTTP_BAD_REQUEST)
 
     user_data = res.json()
     root_folder_id = (
@@ -29,12 +32,12 @@ async def my_folders():
     )
 
     if not root_folder_id:
-        return HTMLResponse("Could not get My Folders root ID", status_code=400)
+        return HTMLResponse(msg.NO_ROOT_FOLDER, status_code=sc.HTTP_BAD_REQUEST)
 
     files_url = f"{Config.ZOHO_API_URL}/workdrive/api/v1/folders/{root_folder_id}/files"
     res2 = requests.get(files_url, headers=headers)
 
-    if res2.status_code == 200:
+    if res2.status_code == sc.HTTP_OK:
         files = res2.json()
         output = "<h3>My Folders & Files:</h3><ul>"
         for file in files.get("data", []):
@@ -42,15 +45,15 @@ async def my_folders():
             ftype = file.get("type", "unknown")
             output += f"<li>{fname} — {ftype}</li>"
         output += "</ul><a href='/'>Back</a>"
-        return HTMLResponse(output)
+        return HTMLResponse(output, status_code=sc.HTTP_OK)
     else:
-        return HTMLResponse(f"Failed to fetch files: {res2.text}", status_code=400)
+        return HTMLResponse(f"{msg.FOLDERS_FETCH_FAILED}: {res2.text}", status_code=sc.HTTP_BAD_REQUEST)
 
 @router.get("/team", response_class=HTMLResponse)
 async def team_folders():
     user = user_sessions.get("current_user")
     if not user:
-        return HTMLResponse("Not logged in", status_code=401)
+        return HTMLResponse(msg.NOT_LOGGED_IN, status_code=sc.HTTP_UNAUTHORIZED)
 
     access_token = user['access_token']
     headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
@@ -58,15 +61,15 @@ async def team_folders():
     teams_url = f"{Config.ZOHO_API_URL}/workdrive/api/v1/users/me/teams"
     res = requests.get(teams_url, headers=headers)
 
-    if res.status_code != 200:
-        return HTMLResponse(f"Failed to get teams: {res.text}", status_code=400)
+    if res.status_code != sc.HTTP_OK:
+        return HTMLResponse(f"{msg.FOLDERS_FETCH_FAILED}: {res.text}", status_code=sc.HTTP_BAD_REQUEST)
 
     teams_data = res.json()
     output = "<h3>Team Folders & Files:</h3>"
 
     teams = teams_data.get("data", [])
     if not teams:
-        return HTMLResponse("No teams found", status_code=400)
+        return HTMLResponse(msg.NO_TEAMS_FOUND, status_code=sc.HTTP_BAD_REQUEST)
 
     for team in teams:
         team_id = team.get("id")
@@ -76,8 +79,8 @@ async def team_folders():
         teamfolders_url = f"{Config.ZOHO_API_URL}/workdrive/api/v1/teamfolders?org_id={team_id}"
         res2 = requests.get(teamfolders_url, headers=headers)
 
-        if res2.status_code != 200:
-            output += f"<li>Failed to list folders for {team_name}: {res2.text}</li>"
+        if res2.status_code != sc.HTTP_OK:
+            output += f"<li>{msg.FOLDERS_FETCH_FAILED} for {team_name}: {res2.text}</li>"
             continue
 
         folders_data = res2.json()
@@ -89,4 +92,4 @@ async def team_folders():
         output += "</ul>"
 
     output += "<a href='/'>Back</a>"
-    return HTMLResponse(output)
+    return HTMLResponse(output, status_code=sc.HTTP_OK)
