@@ -1,5 +1,5 @@
 
-# 🚀 Zoho SSO Login PoC using FastAPI
+# 🚀 Fastapi-Integrations-Hub + ZOHOAPI's + SSO (OAuth 2.0 + OpenID Connect) 
 
 This project demonstrates a scalable Proof of Concept (PoC) for integrating **Zoho Single Sign-On (SSO)** using OAuth 2.0 and OpenID Connect (OIDC) with **Python FastAPI**.
 
