@@ -1,1 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# macOS specific
+.DS_Store
+
+# VS Code and PyCharm specific
+.vscode/
+.idea/
+
+# Python egg and distribution folders
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Logs and coverage
+*.log
+*.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Environment variables
 .env
+.env.*
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Test and debug files
+*.bak
+*.swp
+*.tmp
+
+# Other
+*.sqlite3
+*.db
+
+# System files
+Thumbs.db
+Desktop.ini
