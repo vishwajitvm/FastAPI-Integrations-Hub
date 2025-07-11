@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 import requests
 from config import Config
 from routers.zoho.auth import user_sessions
-
+import html
 from constants import response_messages as msg
 from constants import status_codes as sc
 
@@ -50,6 +50,66 @@ router = APIRouter(prefix="/folders", tags=["Zoho Folders"])
 #     else:
 #         return HTMLResponse(f"{msg.FOLDERS_FETCH_FAILED}: {res2.text}", status_code=sc.HTTP_BAD_REQUEST)
 
+def get_folder_contents(folder, headers, level=0):
+    output = ""
+    indent = "&nbsp;" * (level * 4)
+
+    folder_name = html.escape(folder.get("attributes", {}).get("name", "Unnamed Folder"))
+    folder_id = folder.get("id", "No ID")
+    output += f"{indent}<li><strong>{folder_name} (ID: {folder_id})</strong><ul>"
+
+    # Check files link
+    files_link = (
+        folder
+        .get("relationships", {})
+        .get("files", {})
+        .get("links", {})
+        .get("related")
+    )
+
+    if files_link:
+        files_res = requests.get(files_link, headers=headers)
+        if files_res.status_code == sc.HTTP_OK:
+            files_data = files_res.json()
+            files_list = files_data.get("data", [])
+            if not files_list:
+                output += f"{indent}<li>No files</li>"
+            else:
+                for file in files_list:
+                    file_name = html.escape(file.get("attributes", {}).get("name", "Unnamed File"))
+                    file_type = html.escape(file.get("type", "unknown"))
+                    output += f"{indent}<li>{file_name} — {file_type}</li>"
+        else:
+            output += f"{indent}<li>Failed to fetch files: {files_res.text}</li>"
+    else:
+        output += f"{indent}<li>Files listing not available for this folder.</li>"
+
+    # Check subfolders link
+    subfolders_link = (
+        folder
+        .get("relationships", {})
+        .get("folders", {})
+        .get("links", {})
+        .get("related")
+    )
+
+    if subfolders_link:
+        subfolders_res = requests.get(subfolders_link, headers=headers)
+        if subfolders_res.status_code == sc.HTTP_OK:
+            subfolders_data = subfolders_res.json()
+            subfolders_list = subfolders_data.get("data", [])
+            for subfolder in subfolders_list:
+                # Recursively call for each subfolder
+                output += get_folder_contents(subfolder, headers, level + 1)
+        else:
+            output += f"{indent}<li>Failed to fetch subfolders: {subfolders_res.text}</li>"
+    else:
+        output += f"{indent}<li>Subfolders listing not available for this folder.</li>"
+
+    output += f"{indent}</ul></li>"
+    return output
+
+
 @router.get("/my", response_class=HTMLResponse)
 async def my_folders():
     user = user_sessions.get("current_user")
@@ -87,43 +147,14 @@ async def my_folders():
         return HTMLResponse(f"{msg.FOLDERS_FETCH_FAILED}: {res2.text}", status_code=sc.HTTP_BAD_REQUEST)
 
     folders_data = res2.json()
-    output = "<h3>Incoming Folders & Files:</h3><ul>"
+    output = "<h3>Incoming Folders & All Nested Files/Folders:</h3><ul>"
 
     for folder in folders_data.get("data", []):
-        folder_name = folder.get("attributes", {}).get("name", "Unnamed Folder")
-        folder_id = folder.get("id", "No ID")
-        output += f"<li><strong>{folder_name} (ID: {folder_id})</strong><ul>"
-
-        # Check for files link
-        files_link = (
-            folder
-            .get("relationships", {})
-            .get("files", {})
-            .get("links", {})
-            .get("related")
-        )
-
-        if files_link:
-            files_res = requests.get(files_link, headers=headers)
-            if files_res.status_code == sc.HTTP_OK:
-                files_data = files_res.json()
-                files_list = files_data.get("data", [])
-                if not files_list:
-                    output += "<li>No files</li>"
-                else:
-                    for file in files_list:
-                        file_name = file.get("attributes", {}).get("name", "Unnamed File")
-                        file_type = file.get("type", "unknown")
-                        output += f"<li>{file_name} — {file_type}</li>"
-            else:
-                output += f"<li>Failed to fetch files: {files_res.text}</li>"
-        else:
-            output += "<li>No files link configured for this folder.</li>"
-
-        output += "</ul></li>"
+        output += get_folder_contents(folder, headers, level=1)
 
     output += "</ul><a href='/'>Back</a>"
     return HTMLResponse(output, status_code=sc.HTTP_OK)
+
 
 @router.get("/team", response_class=HTMLResponse)
 async def team_folders():
