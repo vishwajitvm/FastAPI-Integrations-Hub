@@ -12,12 +12,15 @@ from constants import status_codes as sc
 router = APIRouter(prefix="/folders", tags=["Zoho Folders"])
 
 def get_folder_contents_json(folder, headers):
-    folder_name = folder.get("attributes", {}).get("name", "Unnamed Folder")
+    attributes = folder.get("attributes", {})
+    folder_name = attributes.get("name", "Unnamed Folder")
     folder_id = folder.get("id", "No ID")
+    folder_url = attributes.get("permalink", "")
 
     folder_data = {
         "name": folder_name,
         "id": folder_id,
+        "url": folder_url,
         "files": [],
         "subfolders": []
     }
@@ -37,11 +40,15 @@ def get_folder_contents_json(folder, headers):
             files_data = files_res.json()
             files_list = files_data.get("data", [])
             for file in files_list:
-                file_name = file.get("attributes", {}).get("name", "Unnamed File")
+                file_attributes = file.get("attributes", {})
+                file_name = file_attributes.get("name", "Unnamed File")
                 file_type = file.get("type", "unknown")
+                file_url = file_attributes.get("permalink", "")
+
                 folder_data["files"].append({
                     "name": file_name,
-                    "type": file_type
+                    "type": file_type,
+                    "url": file_url
                 })
         else:
             folder_data["files"].append({
@@ -67,7 +74,6 @@ def get_folder_contents_json(folder, headers):
             subfolders_data = subfolders_res.json()
             subfolders_list = subfolders_data.get("data", [])
             for subfolder in subfolders_list:
-                # Recursively get subfolder contents
                 subfolder_data = get_folder_contents_json(subfolder, headers)
                 folder_data["subfolders"].append(subfolder_data)
         else:
