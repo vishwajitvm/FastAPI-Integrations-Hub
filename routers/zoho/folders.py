@@ -77,8 +77,6 @@ async def my_folders():
         .get("links", {})
         .get("related")
     )
-    
-    print(json.dumps(incoming_folders_link, indent=2))  # Debugging line to check user data
 
     if not incoming_folders_link:
         return HTMLResponse(msg.NO_ROOT_FOLDER, status_code=sc.HTTP_BAD_REQUEST)
@@ -89,16 +87,43 @@ async def my_folders():
         return HTMLResponse(f"{msg.FOLDERS_FETCH_FAILED}: {res2.text}", status_code=sc.HTTP_BAD_REQUEST)
 
     folders_data = res2.json()
-    output = "<h3>Incoming Folders:</h3><ul>"
+    output = "<h3>Incoming Folders & Files:</h3><ul>"
 
     for folder in folders_data.get("data", []):
         folder_name = folder.get("attributes", {}).get("name", "Unnamed Folder")
         folder_id = folder.get("id", "No ID")
-        output += f"<li>{folder_name} (ID: {folder_id})</li>"
+        output += f"<li><strong>{folder_name} (ID: {folder_id})</strong><ul>"
+
+        # Check for files link
+        files_link = (
+            folder
+            .get("relationships", {})
+            .get("files", {})
+            .get("links", {})
+            .get("related")
+        )
+
+        if files_link:
+            files_res = requests.get(files_link, headers=headers)
+            if files_res.status_code == sc.HTTP_OK:
+                files_data = files_res.json()
+                files_list = files_data.get("data", [])
+                if not files_list:
+                    output += "<li>No files</li>"
+                else:
+                    for file in files_list:
+                        file_name = file.get("attributes", {}).get("name", "Unnamed File")
+                        file_type = file.get("type", "unknown")
+                        output += f"<li>{file_name} — {file_type}</li>"
+            else:
+                output += f"<li>Failed to fetch files: {files_res.text}</li>"
+        else:
+            output += "<li>No files link configured for this folder.</li>"
+
+        output += "</ul></li>"
 
     output += "</ul><a href='/'>Back</a>"
     return HTMLResponse(output, status_code=sc.HTTP_OK)
-
 
 @router.get("/team", response_class=HTMLResponse)
 async def team_folders():
