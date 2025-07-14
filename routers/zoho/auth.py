@@ -25,6 +25,8 @@ async def home(request: Request):
             Zoho User ID: {user['sub']}<br><br>
             <a href="/folders/my">List My Folders & Files</a><br>
             <a href="/folders/team">List Team Folders & Files</a><br>
+            <a href="/get-access-token">Get Access Token</a><br>
+
             <a href="/logout">Logout</a>
             """, status_code=sc.HTTP_OK
         )
@@ -84,6 +86,14 @@ async def callback(code: str = None):
     user_sessions["current_user"] = user_info
 
     return RedirectResponse("/")
+
+@router.get("/get-access-token")
+async def get_access_token():
+    user = user_sessions.get("current_user")
+    if not user:
+        return HTMLResponse("Not logged in.", status_code=401)
+    return {"access_token": user.get("access_token")}
+
 
 @router.get("/logout")
 async def logout():
