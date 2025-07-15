@@ -15,7 +15,7 @@ from utils.zoho_folder_helpers import get_folder_contents_json, collect_all_file
 
 router = APIRouter(prefix="/folders", tags=["Zoho Folders"])
 
-@router.get("/my", response_class=JSONResponse)
+@router.get("api/my-folder", response_class=JSONResponse)
 async def my_folders():
     user = user_sessions.get("current_user")
     if not user:
@@ -60,7 +60,7 @@ async def my_folders():
 
     return JSONResponse(result, status_code=sc.HTTP_OK)
 
-@router.get("/team", response_class=HTMLResponse)
+@router.get("api/my-teams", response_class=HTMLResponse)
 async def team_folders():
     user = user_sessions.get("current_user")
     if not user:
@@ -105,7 +105,7 @@ async def team_folders():
     output += "<a href='/'>Back</a>"
     return HTMLResponse(output, status_code=sc.HTTP_OK)
 
-@router.get("/my-n8n", response_class=JSONResponse)
+@router.get("api/my-folder-n8n", response_class=JSONResponse)
 async def my_folders_n8n(user_id: str = Query(...)):
     # Get tokens synchronously
     tokens = get_user_tokens(user_id)
