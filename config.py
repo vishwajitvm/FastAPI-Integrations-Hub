@@ -10,3 +10,4 @@ class Config:
     REDIRECT_URI = os.getenv("ZOHO_REDIRECT_URI")
     ZOHO_ACCOUNTS_URL = "https://accounts.zoho.com"
     ZOHO_API_URL = "https://www.zohoapis.com"
+    MONGO_URI = os.getenv("MONGO_URI")
