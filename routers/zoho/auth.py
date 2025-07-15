@@ -153,7 +153,7 @@ async def api_user_access_token(user_id: str):
     if not new_access_token:
         return JSONResponse({"error": "No new access token received"}, status_code=400)
 
-    # ✅ (6) Update DB with new access token
+    # Update DB with new access token
     save_user_tokens(
         user_id=user_id,
         email=user_record.get("email", ""),
