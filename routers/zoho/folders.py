@@ -183,7 +183,7 @@ async def team_folders():
 
 @router.get("/my-n8n", response_class=JSONResponse)
 async def my_folders_n8n(user_id: str = Query(...)):
-    # ✅ Get tokens synchronously
+    # Get tokens synchronously
     tokens = get_user_tokens(user_id)
     if not tokens or not tokens.get("access_token"):
         return JSONResponse({"error": "User not logged in or token missing"}, status_code=sc.HTTP_UNAUTHORIZED)
@@ -191,7 +191,7 @@ async def my_folders_n8n(user_id: str = Query(...)):
     access_token = tokens["access_token"]
     headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
-    # ✅ Fetch user details
+    # Fetch user details
     user_url = f"{Config.ZOHO_API_URL}/workdrive/api/v1/users/me"
     res = requests.get(user_url, headers=headers)
 
@@ -200,7 +200,7 @@ async def my_folders_n8n(user_id: str = Query(...)):
 
     user_data = res.json()
 
-    # ✅ Get incoming folders link
+    # Get incoming folders link
     incoming_folders_link = (
         user_data
         .get("data", {})
@@ -213,7 +213,7 @@ async def my_folders_n8n(user_id: str = Query(...)):
     if not incoming_folders_link:
         return JSONResponse({"error": msg.NO_ROOT_FOLDER}, status_code=sc.HTTP_BAD_REQUEST)
 
-    # ✅ Fetch folders
+    # Fetch folders
     res2 = requests.get(incoming_folders_link, headers=headers)
     if res2.status_code != sc.HTTP_OK:
         return JSONResponse({"error": f"{msg.FOLDERS_FETCH_FAILED}: {res2.text}"}, status_code=sc.HTTP_BAD_REQUEST)
