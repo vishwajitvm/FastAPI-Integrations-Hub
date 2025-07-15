@@ -1,5 +1,5 @@
 import json
-from fastapi import APIRouter
+from fastapi import APIRouter, Header, Query
 from fastapi.responses import HTMLResponse
 from fastapi.responses import JSONResponse
 import requests
@@ -8,6 +8,9 @@ from routers.zoho.auth import user_sessions
 import html
 from constants import response_messages as msg
 from constants import status_codes as sc
+from typing import Optional
+from utils.shared import get_user_tokens
+
 
 router = APIRouter(prefix="/folders", tags=["Zoho Folders"])
 
@@ -177,3 +180,53 @@ async def team_folders():
 
     output += "<a href='/'>Back</a>"
     return HTMLResponse(output, status_code=sc.HTTP_OK)
+
+@router.get("/my-n8n", response_class=JSONResponse)
+async def my_folders_n8n(user_id: str = Query(...)):
+    # ✅ Get tokens synchronously
+    tokens = get_user_tokens(user_id)
+    if not tokens or not tokens.get("access_token"):
+        return JSONResponse({"error": "User not logged in or token missing"}, status_code=sc.HTTP_UNAUTHORIZED)
+
+    access_token = tokens["access_token"]
+    headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
+
+    # ✅ Fetch user details
+    user_url = f"{Config.ZOHO_API_URL}/workdrive/api/v1/users/me"
+    res = requests.get(user_url, headers=headers)
+
+    if res.status_code != sc.HTTP_OK:
+        return JSONResponse({"error": f"{msg.FETCH_USER_FAILED}: {res.text}"}, status_code=sc.HTTP_BAD_REQUEST)
+
+    user_data = res.json()
+
+    # ✅ Get incoming folders link
+    incoming_folders_link = (
+        user_data
+        .get("data", {})
+        .get("relationships", {})
+        .get("incomingfolders", {})
+        .get("links", {})
+        .get("related")
+    )
+
+    if not incoming_folders_link:
+        return JSONResponse({"error": msg.NO_ROOT_FOLDER}, status_code=sc.HTTP_BAD_REQUEST)
+
+    # ✅ Fetch folders
+    res2 = requests.get(incoming_folders_link, headers=headers)
+    if res2.status_code != sc.HTTP_OK:
+        return JSONResponse({"error": f"{msg.FOLDERS_FETCH_FAILED}: {res2.text}"}, status_code=sc.HTTP_BAD_REQUEST)
+
+    folders_data = res2.json()
+    result = []
+
+    for folder in folders_data.get("data", []):
+        folder_json = get_folder_contents_json(folder, headers)
+        result.append(folder_json)
+
+    return JSONResponse(result, status_code=sc.HTTP_OK)
+
+
+
+
