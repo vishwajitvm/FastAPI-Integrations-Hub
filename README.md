@@ -57,6 +57,8 @@ your_project/
     ├── __init__.py
     └── shared.py     # Shared helpers
     └── zoho_folder_helpers.py     # Zoho api file itration common function
+    ├── zoho_client.py
+    ├── helpers.py
     
 ```
 
