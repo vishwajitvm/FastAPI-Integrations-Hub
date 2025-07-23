@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.zoho import auth, folders
+from routers.chatbot.app.query import routes
+
 
 app = FastAPI()
 
@@ -21,6 +23,8 @@ app.add_middleware(
 # Register routers
 app.include_router(auth.router)
 app.include_router(folders.router)
+app.include_router(routes.chat_router)
+
 
 if __name__ == "__main__":
     import uvicorn
