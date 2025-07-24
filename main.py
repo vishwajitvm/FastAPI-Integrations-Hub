@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers.zoho import auth, folders
 from routers.chatbot.app.query import routes
 
+from routers.zoho import auth, folders,org_info
 
 app = FastAPI()
 
@@ -23,6 +24,7 @@ app.add_middleware(
 # Register routers
 app.include_router(auth.router)
 app.include_router(folders.router)
+app.include_router(org_info.router)
 app.include_router(routes.chat_router)
 
 
