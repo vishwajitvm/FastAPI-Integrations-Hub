@@ -12,22 +12,17 @@ python-dateutil
 pydantic 
 dateparser
 
-
 # LangChain & Vector DB
 langchain
 langchain-astradb
 langchain-google-genai
-langchain_huggingface
-langchain_community
-
+langchain-huggingface
+langchain-community  # ✅ correct spelling with hyphen
 
 # PDF Parsing & Chunking
 PyPDF2
 tiktoken
 sentence-transformers
-pypdf
-unstructured
-
 
 # Astra DB
 astrapy

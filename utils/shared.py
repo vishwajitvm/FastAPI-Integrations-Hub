@@ -11,6 +11,7 @@ client = MongoClient(MONGO_URI)
 db = client[MONGO_DB_NAME]
 
 users_collection = db["users"]
+chatlogs_collection = db["chat_logs"]
 
 
 def save_user_tokens(user_id, email, name, access_token, refresh_token):

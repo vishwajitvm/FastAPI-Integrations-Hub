@@ -21,26 +21,37 @@ async def home(request: Request):
     if user:
         return HTMLResponse(
             f"""
+            <html>
+            <body>
             ✅ Logged in!<br><br>
             Name: {user['name']}<br>
             Email: {user['email']}<br>
             Zoho User ID: {user['sub']}<br><br>
-            <a href="/folders/my">List My Folders & Files</a><br>
-            <a href="/folders/team">List Team Folders & Files</a><br>
+
+            <form action="/Chat/ask?user_id={user['sub']}" method="post">
+                <input type="text" name="query" placeholder="Ask your question..." size="50" required>
+                <button type="submit">Search</button>
+            </form>
+            <br>
+
+            <a href="/folders/my-folder-and-files-n8n?user_id={user['sub']}">List My Folders & Files</a><br>
+            <a href="/folders/my-teams-folder-and-files?user_id={user['sub']}">List Team Folders & Files</a><br>
             <a href="/get-access-token">Get Access Token</a><br>
-            <a href="/api/user-access-token?user_id=794143056.1312325977">Get API USER Access Token</a><br>
+            <a href="/api/user-access-token?user_id={user['sub']}">Get API USER Access Token</a><br>
             <a href="/get-user-id">Get User ID</a><br>
 
             <a href="/logout">Logout</a>
+            </body>
+            </html>
             """, status_code=sc.HTTP_OK
         )
     return templates.TemplateResponse("login.html", {"request": request})
-
+    
 @router.get("/login")
 async def login():
-    zoho_auth_url = (
+    zoho_auth_url = (  
         f"{Config.ZOHO_ACCOUNTS_URL}/oauth/v2/auth?"
-        f"scope=WorkDrive.files.ALL,WorkDrive.teamfolders.READ,openid,email,profile"
+        f"scope=WorkDrive.files.ALL,WorkDrive.teamfolders.READ,ZohoCalendar.calendar.ALL,ZohoCalendar.event.ALL,openid,email,profile"
         f"&client_id={Config.CLIENT_ID}"
         f"&response_type=code"
         f"&access_type=offline"
