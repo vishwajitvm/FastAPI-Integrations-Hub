@@ -109,7 +109,12 @@ async def callback(code: str = None):
         refresh_token=refresh_token
     )
 
-    return RedirectResponse("/")
+    # Redirect to frontend after login
+    frontend_url = (
+        f"http://localhost:5173/home?"
+        f"name={user_info['name']}&email={user_info['email']}&sub={user_info['sub']}&access_token={access_token}&refresh_token={refresh_token}"
+    )
+    return RedirectResponse(frontend_url)
 
 # @router.get("/callback")
 # async def callback(code: str = None):

@@ -1,4 +1,5 @@
 # query/router.py
+from urllib import response
 from fastapi import APIRouter, Request, Form, Query
 from fastapi.responses import HTMLResponse, JSONResponse
 
@@ -117,7 +118,7 @@ async def ask_route(request: Request, query: str = Form(...), user_id: str = Que
                                     response_type="tool",
                                     tool_used=tool_name
                                 )
-                                return HTMLResponse(f"<pre>✅ Tool Call Result:\n{response}</pre>")
+                                return JSONResponse(content={"answer": str(response)})
                         else:
                             print(f"❌ Tool '{tool_name}' not found in registry.")
 
@@ -167,7 +168,8 @@ async def ask_route(request: Request, query: str = Form(...), user_id: str = Que
                 tool_used=None
             )
         print("\n✅ Final Response Ready.")
-        return HTMLResponse(f"<pre>{output}</pre>")
+        return JSONResponse(content={"answer": output})
+
 
     except Exception as e:
         print(f"\n❌ ERROR occurred: {str(e)}")
